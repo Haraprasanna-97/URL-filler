@@ -40,7 +40,14 @@ class urlHandler():
         }
     
     @property
-    def json(self):
+    def json(self) -> dict:
+        """
+        Converts the object of this class to JSON and returns it
+        
+        :param self: The object which is calling the function
+        :return: JSON represtation of the object
+        :rtype: dict
+        """
         return {
             "URL" : self.url,
             "Fields" : self.fields,
