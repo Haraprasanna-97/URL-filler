@@ -74,7 +74,7 @@ class urlHandler():
         
         Scheme, netloc, Path, _, Fragment = self.parts.values()
         fields = self.fields
-        queryParams = [fields[i] + "={" + placeHolderNames[i] + "}" for i in range(len(fields))]
+        queryParams = [fields[i] + "={" + placeHolderNames[i] + "}" for i in range(len(fields)) if placeHolderNames[i] != ""]
         queryParamsstr = "&".join(queryParams)
         components = (Scheme, netloc, Path, '', queryParamsstr, Fragment)
         placeHolderUrl = urlunparse(components)
