@@ -39,6 +39,21 @@ class urlHandler():
             "Fragment" : self.parsed_url.fragment
         }
     
+    @property
+    def json(self):
+        return {
+            "URL" : self.url,
+            "Fields" : self.fields,
+            "Parts" : {
+                "Scheme": self.parsed_url.scheme,
+                "Network location": self.parsed_url.netloc,
+                "Path": self.parsed_url.path or None,
+                "Query": self.parsed_url.query or None,
+                "Fragment": self.parsed_url.fragment or None,
+            },
+            "URL with placeholders" : self.placeHolderUrl
+        }
+    
     def definePlaceHolders(self, placeHolderNames: list) -> str :
         """
         Defines placeholders in the given URL
