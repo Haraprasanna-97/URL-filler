@@ -1,4 +1,5 @@
 import streamlit as st
+
 from urlHandler import urlHandler
 
 def createBasicPageLayout(title: str) -> tuple:
@@ -13,7 +14,7 @@ def createBasicPageLayout(title: str) -> tuple:
 
     st.title(title)
     url = st.text_input("Enter the url", key="urlInput")
-    infoSec, placeHolderSec = st.columns(2)
+    infoSec, placeHolderSec = st.columns([1, 3])
     showFilledURL = st.checkbox("Show filled URL")
     return url, infoSec, placeHolderSec, showFilledURL
 
@@ -45,7 +46,14 @@ def fillPlaceHolders(fields: list | None, urlHandlerObject: urlHandler):
 
     st.header("Placeholder names")
     if isinstance(fields, list):
-        placeHolderNames = [st.text_input(f"Placrholder name for '{field}' field", key=f"placeholder_{key}") for key, field in enumerate(fields, start=1)]
+        placeHolderNames = [
+            st.text_input(
+                f"Placrholder name for '{field}' field",
+                key=f"placeholder_{key}",
+                help="Spaces will be replaced with underscore"
+            ).replace(" ", "_")
+            for key, field in enumerate(fields, start=1)
+        ]
         urlHandlerObject.definePlaceHolders(placeHolderNames=placeHolderNames)
     else:
         st.write("Their are no Query paramitters in the given URL")
@@ -61,4 +69,4 @@ if __name__ == "__main__":
             fillPlaceHolders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
     
         if showFilledURL:
-            st.text(urlHandlerObj.placeHolderUrl)
+            st.code(urlHandlerObj.placeHolderUrl, language=None)
