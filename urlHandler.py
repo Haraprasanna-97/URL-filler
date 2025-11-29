@@ -5,6 +5,7 @@ class urlHandler():
         self.url = url
         self.parsed_url = urlparse(url)
         self.placeHolderUrl = None
+        self.filledUrl = None
     
     @property
     def fields(self) -> list | None:
@@ -61,7 +62,7 @@ class urlHandler():
             "URL with placeholders" : self.placeHolderUrl
         }
     
-    def definePlaceHolders(self, placeHolderNames: list) -> str :
+    def definePlaceholders(self, placeHolderNames: list) -> str :
         """
         Defines placeholders in the given URL
         
@@ -80,6 +81,26 @@ class urlHandler():
         placeHolderUrl = urlunparse(components)
         self.placeHolderUrl = placeHolderUrl
         return placeHolderUrl
+    
+    def definePlaceholderValues(self, placeHolderValues: list) -> str :
+        """
+        Defines values fot the placeholders in the given URL
+        
+        :param self: The object which is calling the function
+        :param placeHolderValues: A list of placeholder values
+        :type placeHolderValues: list
+        :return: The URL with placeholder values for the query paramiters
+        :rtype: str
+        """
+        
+        Scheme, netloc, Path, _, Fragment = self.parts.values()
+        fields = self.fields
+        queryParams = [fields[i] + "=" + placeHolderValues[i] for i in range(len(fields)) if placeHolderValues[i] != ""]
+        queryParamsstr = "&".join(queryParams)
+        components = (Scheme, netloc, Path, '', queryParamsstr, Fragment)
+        filledUrl = urlunparse(components)
+        self.filledUrl = filledUrl
+        return filledUrl
     
     def __str__(self) -> str:
         """
