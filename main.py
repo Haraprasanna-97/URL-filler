@@ -97,15 +97,16 @@ if __name__ == "__main__":
             
             placeholderNames = fillPlaceholders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
             
-            if urlHandlerObj.placeHolderUrl:
-                st.code(urlHandlerObj.placeHolderUrl, language=None)
+            if isinstance(placeholderNames, list):
+                if urlHandlerObj.placeHolderUrl:
+                    st.code(urlHandlerObj.placeHolderUrl, language=None)
 
-            if all(placeholderNames):
-                if testFilledURL:
-                    fillPlaceholderValues(fields=placeholderNames, urlHandlerObject=urlHandlerObj)
-            
-            if urlHandlerObj.filledUrl:
-                st.write(urlHandlerObj.filledUrl)
+                if all(placeholderNames):
+                    if testFilledURL:
+                        fillPlaceholderValues(fields=placeholderNames, urlHandlerObject=urlHandlerObj)
+                
+                if urlHandlerObj.filledUrl:
+                    st.write(urlHandlerObj.filledUrl)
 
     elif isinstance(ReturnValue, str):
         st.info(ReturnValue)
