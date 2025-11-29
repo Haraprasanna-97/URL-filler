@@ -1,5 +1,4 @@
 import streamlit as st
-
 from urlHandler import urlHandler
 
 def createBasicPageLayout(title: str) -> tuple:
@@ -14,9 +13,15 @@ def createBasicPageLayout(title: str) -> tuple:
 
     st.title(title)
     url = st.text_input("Enter the url", key="urlInput")
-    infoSec, placeHolderSec = st.columns([1, 3])
-    showFilledURL = st.checkbox("Show filled URL")
-    return url, infoSec, placeHolderSec, showFilledURL
+    if url.startswith("http://") or url.startswith("https://"):
+        infoSection, placeholderSection = st.columns(2)
+        with infoSection:
+            showInfoSec = st.checkbox("Show URL info")
+        with placeholderSection:
+            showFilledURL = st.checkbox("Show filled URL")
+        return url, showInfoSec, showFilledURL
+    else:
+        return "Enter a valid URL to contnue"
 
 def fillInfoSection(urlHandlerObject: urlHandler):
     """
@@ -59,14 +64,18 @@ def fillPlaceHolders(fields: list | None, urlHandlerObject: urlHandler):
         st.write("Their are no Query paramitters in the given URL")
 
 if __name__ == "__main__":
-    url, infoSec, placeHolderSec, showFilledURL = createBasicPageLayout(title="URL filler")
-    urlHandlerObj = urlHandler(url)
-    if url:
-        with infoSec:
-            fillInfoSection(urlHandlerObject=urlHandlerObj)
-        
-        with placeHolderSec:
-            fillPlaceHolders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
+    ReturnValue = createBasicPageLayout(title="URL filler")
+    if isinstance(ReturnValue, tuple):
+        url, showInfoSec, showFilledURL = ReturnValue
     
-        if showFilledURL:
-            st.code(urlHandlerObj.placeHolderUrl, language=None)
+        urlHandlerObj = urlHandler(url)
+        if url:
+            if showInfoSec:
+                fillInfoSection(urlHandlerObject=urlHandlerObj)
+            
+            fillPlaceHolders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
+        
+            if showFilledURL:
+                st.code(urlHandlerObj.placeHolderUrl, language=None)
+    elif isinstance(ReturnValue, str):
+        st.error(ReturnValue)
