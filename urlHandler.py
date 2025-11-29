@@ -1,4 +1,4 @@
-from urllib.parse import urlparse, urlunparse, parse_qs
+from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
 
 class urlHandler():
     def __init__(self, url: str):
@@ -95,8 +95,8 @@ class urlHandler():
         
         Scheme, netloc, Path, _, Fragment = self.parts.values()
         fields = self.fields
-        queryParams = [fields[i] + "=" + placeHolderValues[i] for i in range(len(fields)) if placeHolderValues[i] != ""]
-        queryParamsstr = "&".join(queryParams)
+        queryParams = {fields[i] : placeHolderValues[i] for i in range(len(fields)) if placeHolderValues[i] != ""}
+        queryParamsstr = urlencode(queryParams)
         components = (Scheme, netloc, Path, '', queryParamsstr, Fragment)
         filledUrl = urlunparse(components)
         self.filledUrl = filledUrl

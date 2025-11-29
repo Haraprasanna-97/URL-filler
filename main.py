@@ -12,11 +12,12 @@ def createBasicPageLayout(title: str) -> tuple | str:
     """
 
     st.title(title)
+    st.sidebar.title(title)
     url = st.text_input("Enter the url", key="urlInput")
+    st.sidebar.header("Settings")
+    showInfoSec = st.sidebar.checkbox("Show URL info")
+    testFilledURL = st.sidebar.checkbox("Test filled URL")
     if url.startswith("http://") or url.startswith("https://"):
-        st.sidebar.title("Settings")
-        showInfoSec = st.sidebar.checkbox("Show URL info")
-        testFilledURL = st.sidebar.checkbox("Test filled URL")
         return url, showInfoSec, testFilledURL
     else:
         return "Enter a valid URL to contnue"
@@ -94,14 +95,14 @@ if __name__ == "__main__":
             if showInfoSec:
                 fillInfoSection(urlHandlerObject=urlHandlerObj)
             
-            placeHolderNames = fillPlaceholders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
+            placeholderNames = fillPlaceholders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
             
-            if all(placeHolderNames):
-                if testFilledURL:
-                    fillPlaceholderValues(fields=placeHolderNames, urlHandlerObject=urlHandlerObj)
-
             if urlHandlerObj.placeHolderUrl:
                 st.code(urlHandlerObj.placeHolderUrl, language=None)
+
+            if all(placeholderNames):
+                if testFilledURL:
+                    fillPlaceholderValues(fields=placeholderNames, urlHandlerObject=urlHandlerObj)
             
             if urlHandlerObj.filledUrl:
                 st.write(urlHandlerObj.filledUrl)
