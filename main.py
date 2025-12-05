@@ -7,15 +7,16 @@ def createBasicPageLayout(title: str) -> tuple | str:
     
     :param title: Defines the titke of the streamlit application
     :type title: str
-    :return: A tuple containing the URL entered by the user, the sections (info and placeHolder) and a flag for showing or hiding the filled URL. Message stating to enter a valid URL
+    :return: A tuple containing the URL entered by the user, the sections (info and placeholder) and a flag for showing or hiding the filled URL. Message stating to enter a valid URL
     :rtype: tuple | str
     """
 
+    st.set_page_config(page_title = title, page_icon="🔗", layout="wide", initial_sidebar_state="auto")
     st.title(title)
     st.sidebar.title(title)
     url = st.text_input("Enter the url", key="urlInput")
     st.sidebar.header("Settings")
-    showInfoSec = st.sidebar.checkbox("Show URL info")
+    showInfoSec = st.sidebar.checkbox("Show URL details")
     testFilledURL = st.sidebar.checkbox("Test filled URL")
     if url.startswith("http://") or url.startswith("https://"):
         return url, showInfoSec, testFilledURL
@@ -37,6 +38,12 @@ def fillInfoSection(urlHandlerObject: urlHandler):
         
     with st.expander("Parts"):
         st.write(urlHandlerObject.parts)
+    
+    if urlHandlerObj.parts["Query"]:
+        with st.expander("Query"):
+            st.dataframe(urlHandlerObject.table, hide_index=True)
+            if(any([len(val) == 2 for val in urlHandlerObj.values])): # Check if their is any key that has multiple values
+                st.write("Multiple values for the same parameters are separated by commas")
 
 def fillPlaceholders(fields: list | None, urlHandlerObject: urlHandler):
     """
@@ -44,22 +51,22 @@ def fillPlaceholders(fields: list | None, urlHandlerObject: urlHandler):
     
     :param fields: The fields in the query parameters
     :type fields: list | None
-    :param urlHandlerObject: The object containing the definePlaceHolders method
+    :param urlHandlerObject: The object containing the definePlaceholders method
     :type urlHandlerObject: urlHandler
     """
 
     st.header("Placeholder names")
     if isinstance(fields, list):
-        placeHolderNames = [
+        placeholderNames = [
             st.text_input(
-                f"Placrholder name for '{field}' field",
+                f"Placeholder name for '{field}' field",
                 key=f"placeholder_{key}",
                 help="Spaces will be replaced with underscore"
             ).replace(" ", "_")
             for key, field in enumerate(fields, start=1)
         ]
-        urlHandlerObject.definePlaceholders(placeHolderNames=placeHolderNames)
-        return placeHolderNames
+        urlHandlerObject.definePlaceholders(placeholderNames=placeholderNames)
+        return placeholderNames
     else:
         st.info("Their are no query paramitters in the given URL")
 
@@ -69,19 +76,19 @@ def fillPlaceholderValues(fields: list | None, urlHandlerObject: urlHandler):
     
     :param fields: The fields in the query parameters
     :type fields: list | None
-    :param urlHandlerObject: The object containing the definePlaceHolders method
+    :param urlHandlerObject: The object containing the definePlaceholders method
     :type urlHandlerObject: urlHandler
     """
 
     st.header("Placeholder values")
     if isinstance(fields, list):
-        placeHolderValues = [
+        placeholderValues = [
             st.text_input(
                 f"Value for '{field}' field",
                 key=f"value_{key}")
             for key, field in enumerate(fields, start=1)
         ]
-        urlHandlerObject.definePlaceholderValues(placeHolderValues=placeHolderValues)
+        urlHandlerObject.definePlaceholderValues(placeholderValues=placeholderValues)
     else:
         st.info("Their are no query paramitters in the given URL")
 
@@ -98,8 +105,8 @@ if __name__ == "__main__":
             placeholderNames = fillPlaceholders(fields=urlHandlerObj.fields, urlHandlerObject=urlHandlerObj)
             
             if isinstance(placeholderNames, list):
-                if urlHandlerObj.placeHolderUrl:
-                    st.code(urlHandlerObj.placeHolderUrl, language=None)
+                if urlHandlerObj.placeholderUrl:
+                    st.code(urlHandlerObj.placeholderUrl, language=None)
 
                 if all(placeholderNames):
                     if testFilledURL:

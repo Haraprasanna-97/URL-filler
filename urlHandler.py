@@ -1,10 +1,11 @@
 from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
+import pandas as pd
 
 class urlHandler():
     def __init__(self, url: str):
         self.url = url
         self.parsed_url = urlparse(url)
-        self.placeHolderUrl = None
+        self.placeholderUrl = None
         self.filledUrl = None
     
     @property
@@ -23,6 +24,52 @@ class urlHandler():
             return list(keyValuePairs.keys())
         return None
     
+    @property
+    def values(self) -> list | None:
+        """
+        If their are values available in the url then return them otherwise returns None
+        
+        :param self: The object which is calling the function
+        :return: A list of values if present in the query paramiters of the URL otherwise returns None
+        :rtype: list | None
+        
+        """
+        query = self.parsed_url.query
+        if query:
+            keyValuePairs = parse_qs(query)
+            listOfValues = list(keyValuePairs.values())
+            return listOfValues
+        return None
+    
+    @property
+    def items(self) -> dict:
+        """
+        Returns the fields and their values as a dictinary where multiple values for a single field are separated by comma
+        
+        :param self: The object which is calling the function
+        :return: a dictinarry where multiple values for a single field are separated by comma
+        :rtype: dict
+        """
+
+        return {key: ", ".join(value) for key, value in zip(self.fields, self.values)}
+    
+    @property
+    def table(self) -> pd.DataFrame:        
+        """
+        Present the query paramiters as a table
+        
+        :param self: The object which is calling the function
+        :return: A Pandas dataframe
+        :rtype: DataFrame
+        """
+        Data = {
+            "Paramiters": self.fields,
+            "Values": list(self.items.values())
+        }
+        
+        df = pd.DataFrame(data=Data)
+        return df
+
     @property
     def parts(self) -> dict:
         """
@@ -58,44 +105,43 @@ class urlHandler():
                 "Path": self.parsed_url.path or None,
                 "Query": self.parsed_url.query or None,
                 "Fragment": self.parsed_url.fragment or None,
-            },
-            "URL with placeholders" : self.placeHolderUrl
+            }
         }
     
-    def definePlaceholders(self, placeHolderNames: list) -> str :
+    def definePlaceholders(self, placeholderNames: list) -> str :
         """
         Defines placeholders in the given URL
         
         :param self: The object which is calling the function
-        :param placeHolderNames: A list of placeholder names
-        :type placeHolderNames: list
+        :param placeholderNames: A list of placeholder names
+        :type placeholderNames: list
         :return: The URL with placeholders for the query paramiters
         :rtype: str
         """
         
         Scheme, netloc, Path, _, Fragment = self.parts.values()
         fields = self.fields
-        queryParams = [fields[i] + "={" + placeHolderNames[i] + "}" for i in range(len(fields)) if placeHolderNames[i] != ""]
+        queryParams = [fields[i] + "={" + placeholderNames[i] + "}" for i in range(len(fields)) if placeholderNames[i] != ""]
         queryParamsstr = "&".join(queryParams)
         components = (Scheme, netloc, Path, '', queryParamsstr, Fragment)
-        placeHolderUrl = urlunparse(components)
-        self.placeHolderUrl = placeHolderUrl
-        return placeHolderUrl
+        placeholderUrl = urlunparse(components)
+        self.placeholderUrl = placeholderUrl
+        return placeholderUrl
     
-    def definePlaceholderValues(self, placeHolderValues: list) -> str :
+    def definePlaceholderValues(self, placeholderValues: list) -> str :
         """
         Defines values fot the placeholders in the given URL
         
         :param self: The object which is calling the function
-        :param placeHolderValues: A list of placeholder values
-        :type placeHolderValues: list
+        :param placeholderValues: A list of placeholder values
+        :type placeholderValues: list
         :return: The URL with placeholder values for the query paramiters
         :rtype: str
         """
         
         Scheme, netloc, Path, _, Fragment = self.parts.values()
         fields = self.fields
-        queryParams = {fields[i] : placeHolderValues[i] for i in range(len(fields)) if placeHolderValues[i] != ""}
+        queryParams = {fields[i] : placeholderValues[i] for i in range(len(fields)) if placeholderValues[i] != ""}
         queryParamsstr = urlencode(queryParams)
         components = (Scheme, netloc, Path, '', queryParamsstr, Fragment)
         filledUrl = urlunparse(components)
@@ -120,5 +166,8 @@ class urlHandler():
             Path: {self.parsed_url.path or None}
             Query: {self.parsed_url.query or None}
             Fragment: {self.parsed_url.fragment or None}
-        URL with placeholders : {self.placeHolderUrl}
 """ # Display None if a part in the URL is not preset
+    
+if __name__ == "__main__":
+    obj = urlHandler("https://www.google.com/search?q=ll&o=3&q=l2")
+    print(obj.json)
