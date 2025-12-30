@@ -10,7 +10,7 @@
 
 ### View URL details 
 
-![Demo of View URL details](./gifs/View%20URL%20details.gif)
+![Demo of View URL details](https://github.com/Haraprasanna-97/URL-filler/blob/main/GIFs/View%20URL%20details.gif)
 
 - Add the URL in which you want to view the details and hit enter
 - Choose the `Show URL details` option from settings
@@ -18,7 +18,7 @@
 
 ### Get the placeholder URL
 
-![Demo of Get the placeholder URL](./gifs/Get%20the%20placeholder%20URL.gif)
+![Demo of Get the placeholder URL](https://github.com/Haraprasanna-97/URL-filler/blob/main/GIFs/Get%20the%20placeholder%20URL.gif)
 
 - Add the URL in which you want to add placeholders and hit enter
 - In the placeholder names section, provide the names of the placeholders you want to add to the URL. Hit `enter key` to apply the placeholders in the URL
@@ -26,7 +26,7 @@
 
 ### Test the placeholder URL
 
-![Demo of Test the placeholder URL](./gifs/Test%20the%20placeholder%20URL.gif)
+![Demo of Test the placeholder URL](https://github.com/Haraprasanna-97/URL-filler/blob/main/GIFs/Test%20the%20placeholder%20URL.gif)
 
 - Add the URL in which you want to add placeholders and hit enter
 - Provide the placeholder names for the placeholders you want to add in the `Placeholder names` section
