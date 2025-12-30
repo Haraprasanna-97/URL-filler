@@ -71,21 +71,28 @@ class urlHandler():
         return df
 
     @property
-    def parts(self) -> dict:
+    def parts(self) -> tuple[pd.DataFrame, dict]:
         """
-        Returns all the parts of the given URL as a dictonary. Return None for those parts which are not available
+        Returns all the parts of the given URL as a pandas dataframe along with a list of the partnames as a tuble. Return None for those parts which are not available
         
         :param self: The object which is calling the function
         :return: A python dictionary containing dufferent parts of the URL such as Scheme, Network location, Path, Query, Fragment
         :rtype: dict
         """
-        return {
+        parts = {
             "Scheme" : self.parsed_url.scheme,
             "Network location" : self.parsed_url.netloc,
             "Path" : self.parsed_url.path,
             "Query" : self.parsed_url.query,
             "Fragment" : self.parsed_url.fragment
         }
+
+        dataTable = pd.DataFrame({
+            "Parts": list(parts.keys()),
+            "Values": list(parts.values())
+        })
+        
+        return dataTable, parts
     
     @property
     def json(self) -> dict:
@@ -119,7 +126,7 @@ class urlHandler():
         :rtype: str
         """
         
-        Scheme, netloc, Path, _, Fragment = self.parts.values()
+        Scheme, netloc, Path, _, Fragment = self.parts[1].values()
         fields = self.fields
         queryParams = [fields[i] + "={" + placeholderNames[i] + "}" for i in range(len(fields)) if placeholderNames[i] != ""]
         queryParamsstr = "&".join(queryParams)
@@ -139,7 +146,7 @@ class urlHandler():
         :rtype: str
         """
         
-        Scheme, netloc, Path, _, Fragment = self.parts.values()
+        Scheme, netloc, Path, _, Fragment = self.parts[1].values()
         fields = self.fields
         queryParams = {fields[i] : placeholderValues[i] for i in range(len(fields)) if placeholderValues[i] != ""}
         queryParamsstr = urlencode(queryParams)

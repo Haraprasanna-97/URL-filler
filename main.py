@@ -14,7 +14,7 @@ def createBasicPageLayout(title: str) -> tuple | str:
     st.set_page_config(page_title = title, page_icon="🔗", layout="wide", initial_sidebar_state="auto")
     st.title(title)
     st.sidebar.title(title)
-    url = st.text_input("Enter the url", key="urlInput")
+    url = st.text_input("Enter the url or web link", key="urlInput")
     st.sidebar.header("Settings")
     showInfoSec = st.sidebar.checkbox("Show URL details")
     testFilledURL = st.sidebar.checkbox("Test filled URL")
@@ -37,9 +37,9 @@ def fillInfoSection(urlHandlerObject: urlHandler):
         st.write(urlHandlerObject.json)
         
     with st.expander("Parts"):
-        st.write(urlHandlerObject.parts)
+        st.dataframe(urlHandlerObject.parts[0])
     
-    if urlHandlerObj.parts["Query"]:
+    if urlHandlerObj.parts[1]["Query"]:
         with st.expander("Query"):
             st.dataframe(urlHandlerObject.table, hide_index=True)
             if(any([len(val) == 2 for val in urlHandlerObj.values])): # Check if their is any key that has multiple values
